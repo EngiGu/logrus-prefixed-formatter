@@ -7,7 +7,8 @@ color themes are supported.
 
 **suppoort caller log and caller color style**
 
-![Formatter screenshot](http://cl.ly/image/1w0B3F233F3z/formatter-screenshot@2x.png)
+![image](https://github.com/EngiGu/logrus-prefixed-formatter/assets/24751376/a2c789c9-e578-413a-9d6d-892aa84f6832)
+
 
 Just like with the original `logrus.TextFormatter` when a TTY is not attached, the output is compatible with the
 [logfmt](http://godoc.org/github.com/kr/logfmt) format:
