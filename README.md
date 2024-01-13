@@ -5,6 +5,8 @@
 modified colored output and support for log entry prefixes, e.g. message source followed by a colon. In addition, custom
 color themes are supported.
 
+**suppoort caller log and caller color style**
+
 ![Formatter screenshot](http://cl.ly/image/1w0B3F233F3z/formatter-screenshot@2x.png)
 
 Just like with the original `logrus.TextFormatter` when a TTY is not attached, the output is compatible with the
@@ -89,6 +91,7 @@ Sets an alternative color scheme for colored output. `prefixed.ColorScheme` stru
 * `DebugLevelStyle string` — debug level style.
 * `PrefixStyle string` — prefix style.
 * `TimestampStyle string` — timestamp style.
+* `CallerStyle string` — caller style.
 
 Color styles should be specified using [mgutz/ansi](https://github.com/mgutz/ansi#style-format) style syntax. For example, here is the default theme:
 
@@ -100,7 +103,7 @@ FatalLevelStyle: "red",
 PanicLevelStyle: "red",
 DebugLevelStyle: "blue",
 PrefixStyle:     "cyan",
-TimestampStyle:  "black+h"
+CallerStyle:     "cyan"
 ```
 
 It's not necessary to specify all colors when changing color scheme if you want to change just specific ones:
