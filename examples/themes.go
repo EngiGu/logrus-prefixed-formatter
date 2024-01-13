@@ -10,18 +10,22 @@ var log = logrus.New()
 func init() {
 	formatter := new(prefixed.TextFormatter)
 	formatter.FullTimestamp = true
+	formatter.FullTimestamp = true
 
 	// Set specific colors for prefix and timestamp
 	formatter.SetColorScheme(&prefixed.ColorScheme{
 		PrefixStyle:    "blue+b",
 		TimestampStyle: "white+h",
+		CallerStyle:    "cyan",
 	})
 
+	log.SetReportCaller(true)
 	log.Formatter = formatter
 	log.Level = logrus.DebugLevel
 }
 
 func main() {
+
 	log.WithFields(logrus.Fields{
 		"prefix": "main",
 		"animal": "walrus",

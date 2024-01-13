@@ -29,6 +29,7 @@ var (
 		PanicLevelStyle: "red",
 		DebugLevelStyle: "blue",
 		PrefixStyle:     "cyan",
+		CallerStyle:     "cyan",
 		TimestampStyle:  "black+h",
 	}
 	noColorsColorScheme *compiledColorScheme = &compiledColorScheme{
@@ -39,6 +40,7 @@ var (
 		PanicLevelColor: ansi.ColorFunc(""),
 		DebugLevelColor: ansi.ColorFunc(""),
 		PrefixColor:     ansi.ColorFunc(""),
+		CallerColor:     ansi.ColorFunc(""),
 		TimestampColor:  ansi.ColorFunc(""),
 	}
 	defaultCompiledColorScheme *compiledColorScheme = compileColorScheme(defaultColorScheme)
@@ -57,6 +59,7 @@ type ColorScheme struct {
 	DebugLevelStyle string
 	PrefixStyle     string
 	TimestampStyle  string
+	CallerStyle     string
 }
 
 type compiledColorScheme struct {
@@ -67,6 +70,7 @@ type compiledColorScheme struct {
 	PanicLevelColor func(string) string
 	DebugLevelColor func(string) string
 	PrefixColor     func(string) string
+	CallerColor     func(string) string
 	TimestampColor  func(string) string
 }
 
@@ -148,6 +152,7 @@ func compileColorScheme(s *ColorScheme) *compiledColorScheme {
 		DebugLevelColor: getCompiledColor(s.DebugLevelStyle, defaultColorScheme.DebugLevelStyle),
 		PrefixColor:     getCompiledColor(s.PrefixStyle, defaultColorScheme.PrefixStyle),
 		TimestampColor:  getCompiledColor(s.TimestampStyle, defaultColorScheme.TimestampStyle),
+		CallerColor:     getCompiledColor(s.CallerStyle, defaultColorScheme.CallerStyle),
 	}
 }
 
@@ -311,7 +316,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 	}
 
 	if f.DisableTimestamp {
-		fmt.Fprintf(b, "%s%s%s "+messageFormat, level, caller, prefix, message)
+		fmt.Fprintf(b, "%s%s%s "+messageFormat, level, colorScheme.CallerColor(caller), prefix, message)
 	} else {
 		var timestamp string
 		if !f.FullTimestamp {
@@ -319,7 +324,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 		} else {
 			timestamp = fmt.Sprintf("[%s]", entry.Time.Format(timestampFormat))
 		}
-		fmt.Fprintf(b, "%s %s%s%s "+messageFormat, colorScheme.TimestampColor(timestamp), level, caller, prefix, message)
+		fmt.Fprintf(b, "%s %s%s%s "+messageFormat, colorScheme.TimestampColor(timestamp), level, colorScheme.CallerColor(caller), prefix, message)
 	}
 	for _, k := range keys {
 		if k != "prefix" {
@@ -393,12 +398,12 @@ func (f *TextFormatter) appendValue(b *bytes.Buffer, value interface{}) {
 // This is to not silently overwrite `time`, `msg` and `level` fields when
 // dumping it. If this code wasn't there doing:
 //
-//  logrus.WithField("level", 1).Info("hello")
+//	logrus.WithField("level", 1).Info("hello")
 //
 // would just silently drop the user provided level. Instead with this code
 // it'll be logged as:
 //
-//  {"level": "info", "fields.level": 1, "msg": "hello", "time": "..."}
+//	{"level": "info", "fields.level": 1, "msg": "hello", "time": "..."}
 func prefixFieldClashes(data logrus.Fields) {
 	if t, ok := data["time"]; ok {
 		data["fields.time"] = t
